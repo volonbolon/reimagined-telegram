@@ -9,7 +9,7 @@
 import XCTest
 @testable import Pod_Player
 
-class Pod_PlayerTests: XCTestCase {
+class PodPlayerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
