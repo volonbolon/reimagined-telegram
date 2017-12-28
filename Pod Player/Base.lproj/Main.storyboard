@@ -726,10 +726,10 @@
             </objects>
             <point key="canvasLocation" x="75" y="702"/>
         </scene>
-        <!--View Controller-->
+        <!--Podcasts View Controller-->
         <scene sceneID="YEk-kk-lSH">
             <objects>
-                <viewController id="VKc-rd-Cho" sceneMemberID="viewController">
+                <viewController id="VKc-rd-Cho" customClass="PodcastsViewController" customModule="Pod_Player" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="919-Qf-Ofi">
                         <rect key="frame" x="0.0" y="0.0" width="211" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -743,6 +743,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="addPodcastClicked:" target="VKc-rd-Cho" id="Uem-Oi-gFy"/>
+                                </connections>
                             </button>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Udl-AM-xwc">
                                 <rect key="frame" x="8" y="37" width="195" height="22"/>
@@ -829,6 +832,9 @@
                             <constraint firstItem="Udl-AM-xwc" firstAttribute="width" secondItem="uwa-CN-cPF" secondAttribute="width" id="vS9-2f-8nk"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="podcastURLTextField" destination="Udl-AM-xwc" id="5jV-BG-CYP"/>
+                    </connections>
                 </viewController>
                 <customObject id="7dC-7W-V1M" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

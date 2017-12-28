@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		B074045B1FF3EC63004C5707 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B074045A1FF3EC63004C5707 /* AppDelegate.swift */; };
-		B074045D1FF3EC63004C5707 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B074045C1FF3EC63004C5707 /* ViewController.swift */; };
 		B07404601FF3EC63004C5707 /* Pod_Player.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B074045E1FF3EC63004C5707 /* Pod_Player.xcdatamodeld */; };
 		B07404621FF3EC63004C5707 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B07404611FF3EC63004C5707 /* Assets.xcassets */; };
 		B07404651FF3EC63004C5707 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B07404631FF3EC63004C5707 /* Main.storyboard */; };
 		B07404711FF3EC63004C5707 /* Pod_PlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07404701FF3EC63004C5707 /* Pod_PlayerTests.swift */; };
+		B074047D1FF3FD64004C5707 /* PodcastsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B074047C1FF3FD64004C5707 /* PodcastsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +28,6 @@
 /* Begin PBXFileReference section */
 		B07404571FF3EC63004C5707 /* Pod Player.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pod Player.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B074045A1FF3EC63004C5707 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		B074045C1FF3EC63004C5707 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		B074045F1FF3EC63004C5707 /* Pod_Player.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Pod_Player.xcdatamodel; sourceTree = "<group>"; };
 		B07404611FF3EC63004C5707 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B07404641FF3EC63004C5707 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -37,6 +36,7 @@
 		B074046C1FF3EC63004C5707 /* Pod PlayerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Pod PlayerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B07404701FF3EC63004C5707 /* Pod_PlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pod_PlayerTests.swift; sourceTree = "<group>"; };
 		B07404721FF3EC63004C5707 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B074047C1FF3FD64004C5707 /* PodcastsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,12 +79,12 @@
 			isa = PBXGroup;
 			children = (
 				B074045A1FF3EC63004C5707 /* AppDelegate.swift */,
-				B074045C1FF3EC63004C5707 /* ViewController.swift */,
 				B07404611FF3EC63004C5707 /* Assets.xcassets */,
 				B07404631FF3EC63004C5707 /* Main.storyboard */,
 				B07404661FF3EC63004C5707 /* Info.plist */,
 				B07404671FF3EC63004C5707 /* Pod_Player.entitlements */,
 				B074045E1FF3EC63004C5707 /* Pod_Player.xcdatamodeld */,
+				B074047C1FF3FD64004C5707 /* PodcastsViewController.swift */,
 			);
 			path = "Pod Player";
 			sourceTree = "<group>";
@@ -218,7 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B074045D1FF3EC63004C5707 /* ViewController.swift in Sources */,
+				B074047D1FF3FD64004C5707 /* PodcastsViewController.swift in Sources */,
 				B07404601FF3EC63004C5707 /* Pod_Player.xcdatamodeld in Sources */,
 				B074045B1FF3EC63004C5707 /* AppDelegate.swift in Sources */,
 			);
@@ -364,7 +364,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Pod Player/Pod_Player.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = TMBNQLBU46;
@@ -380,7 +379,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Pod Player/Pod_Player.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = TMBNQLBU46;
