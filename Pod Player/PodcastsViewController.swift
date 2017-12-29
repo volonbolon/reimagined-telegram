@@ -13,6 +13,14 @@ class PodcastDatasource: NSObject {
     var podcasts: [Podcast] = []
     @IBOutlet weak var tableView: NSTableView!
 
+    var context: NSManagedObjectContext? {
+        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+            let context = appDelegate.persistentContainer.viewContext
+            return context
+        }
+        return nil
+    }
+
     override init() {
         super.init()
 
@@ -36,8 +44,7 @@ class PodcastDatasource: NSObject {
     }
 
     func getPodcasts() {
-        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
-            let context = appDelegate.persistentContainer.viewContext
+        if let context = self.context {
             let fetchRequest = Podcast.fetchRequest() as NSFetchRequest<Podcast>
             let sortByTitle = NSSortDescriptor(key: "title", ascending: true)
             fetchRequest.sortDescriptors = [sortByTitle]
@@ -50,6 +57,22 @@ class PodcastDatasource: NSObject {
 
             self.tableView.reloadData()
         }
+    }
+
+    func podcastsExists(rssURL: String) -> Bool {
+        if let context = self.context {
+let fetchRequest = Podcast.fetchRequest() as NSFetchRequest<Podcast>
+            let predicate = NSPredicate(format: "rssURL == %@", rssURL)
+            fetchRequest.predicate = predicate
+
+            do {
+                let matchingPodcasts = try context.fetch(fetchRequest)
+                return matchingPodcasts.count >= 1
+            } catch {
+                print(error)
+            }
+        }
+        return false
     }
 }
 
@@ -103,6 +126,15 @@ class PodcastsViewController: NSViewController {
                 let parser = Parser()
                 if let metadata = parser.getPodcastMetadata(data: data) {
                     DispatchQueue.main.async {
+                        guard self.datasource.podcastsExists(rssURL: metadata.feedURL) == false else {
+                            let alert = NSAlert()
+                            alert.messageText = NSLocalizedString("Duplicated Podcast Feed",
+                                                                  comment: "Duplicated Podcast Feed")
+                            let okTitle = NSLocalizedString("OK", comment: "OK")
+                            alert.addButton(withTitle: okTitle)
+                            alert.runModal()
+                            return
+                        }
                         if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
                             let context = appDelegate.persistentContainer.viewContext
                             let podcast = Podcast(context: context)
