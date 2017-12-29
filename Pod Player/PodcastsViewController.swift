@@ -7,26 +7,121 @@
 //
 
 import Cocoa
+import CoreData
+
+class PodcastDatasource: NSObject {
+    var podcasts: [Podcast] = []
+    @IBOutlet weak var tableView: NSTableView!
+
+    override init() {
+        super.init()
+
+        let notificationCenter = NotificationCenter.default
+        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+            let context = appDelegate.persistentContainer.viewContext
+            let notificationName = Notification.Name.NSManagedObjectContextDidSave
+            notificationCenter.addObserver(self,
+                                           selector: #selector(managedObjectContextDidSave(notification:)),
+                                           name: notificationName,
+                                           object: context)
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc func managedObjectContextDidSave(notification: Notification) {
+        self.getPodcasts()
+    }
+
+    func getPodcasts() {
+        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+            let context = appDelegate.persistentContainer.viewContext
+            let fetchRequest = Podcast.fetchRequest() as NSFetchRequest<Podcast>
+            let sortByTitle = NSSortDescriptor(key: "title", ascending: true)
+            fetchRequest.sortDescriptors = [sortByTitle]
+
+            do {
+                self.podcasts = try context.fetch(fetchRequest)
+            } catch {
+                print(error)
+            }
+
+            self.tableView.reloadData()
+        }
+    }
+}
+
+extension PodcastDatasource: NSTableViewDelegate {
+
+}
+
+extension PodcastDatasource: NSTableViewDataSource {
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        return self.podcasts.count
+    }
+
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let identifier = NSUserInterfaceItemIdentifier(rawValue: "podcastCellIdentifier")
+        let cell = tableView.makeView(withIdentifier: identifier, owner: self) as? NSTableCellView
+
+        let podcast = self.podcasts[row]
+
+        if let title = podcast.title {
+            cell?.textField?.stringValue = title
+        } else {
+            cell?.textField?.stringValue = NSLocalizedString("Unknown Title", comment: "Unknown Title")
+        }
+
+        return cell
+    }
+}
 
 class PodcastsViewController: NSViewController {
     @IBOutlet weak var podcastURLTextField: NSTextField!
+    @IBOutlet var datasource: PodcastDatasource!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
+
+        // TEST
+        self.podcastURLTextField.stringValue = "https://www.npr.org/rss/podcast.php?id=510289"
+
+        self.datasource.getPodcasts()
     }
 
     @IBAction func addPodcastClicked(_ sender: Any) {
         let urlString = self.podcastURLTextField.stringValue
         if let url = URL(string: urlString) {
-            let task = URLSession.shared.dataTask(with: url, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) in
+            let session = URLSession.shared
+            let task = session.dataTask(with: url, completionHandler: { (data: Data?, _: URLResponse?, error: Error?) in
                 guard let data = data else {
                     print(error!)
                     return
                 }
-                print(data)
+                let parser = Parser()
+                if let metadata = parser.getPodcastMetadata(data: data) {
+                    DispatchQueue.main.async {
+                        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+                            let context = appDelegate.persistentContainer.viewContext
+                            let podcast = Podcast(context: context)
+                            podcast.imageURL = metadata.imageURL
+                            podcast.rssURL = metadata.feedURL
+                            podcast.title = metadata.title
+
+                            appDelegate.saveAction(nil)
+                        }
+                    }
+                }
             })
             task.resume()
+
+            self.podcastURLTextField.stringValue = ""
         }
     }
+}
+
+extension PodcastsViewController {
+
 }

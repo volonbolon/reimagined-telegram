@@ -758,7 +758,7 @@
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vWa-mO-2WB">
                                 <rect key="frame" x="0.0" y="67" width="211" height="233"/>
                                 <clipView key="contentView" id="mlL-R5-z09">
-                                    <rect key="frame" x="1" y="23" width="209" height="209"/>
+                                    <rect key="frame" x="1" y="0.0" width="209" height="232"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="zca-ZH-X3k" viewBased="YES" id="C6x-1P-hMm">
@@ -781,7 +781,7 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
-                                                        <tableCellView id="mAo-c3-7uT">
+                                                        <tableCellView identifier="podcastCellIdentifier" id="mAo-c3-7uT">
                                                             <rect key="frame" x="1" y="1" width="206" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
@@ -802,6 +802,10 @@
                                                     </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <outlet property="dataSource" destination="ly5-nd-l9a" id="V3s-Wh-bKf"/>
+                                                <outlet property="delegate" destination="ly5-nd-l9a" id="83N-4c-lIW"/>
+                                            </connections>
                                         </tableView>
                                     </subviews>
                                 </clipView>
@@ -833,10 +837,16 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="datasource" destination="ly5-nd-l9a" id="xA7-1p-bue"/>
                         <outlet property="podcastURLTextField" destination="Udl-AM-xwc" id="5jV-BG-CYP"/>
                     </connections>
                 </viewController>
                 <customObject id="7dC-7W-V1M" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="ly5-nd-l9a" customClass="PodcastDatasource" customModule="Pod_Player" customModuleProvider="target">
+                    <connections>
+                        <outlet property="tableView" destination="C6x-1P-hMm" id="8EI-of-ed1"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="1110.5" y="424"/>
         </scene>
