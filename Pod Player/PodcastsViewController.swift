@@ -25,8 +25,8 @@ class PodcastDatasource: NSObject {
         super.init()
 
         let notificationCenter = NotificationCenter.default
-        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
-            let context = appDelegate.persistentContainer.viewContext
+
+        if let context = self.context {
             let notificationName = Notification.Name.NSManagedObjectContextDidSave
             notificationCenter.addObserver(self,
                                            selector: #selector(managedObjectContextDidSave(notification:)),
@@ -77,7 +77,21 @@ let fetchRequest = Podcast.fetchRequest() as NSFetchRequest<Podcast>
 }
 
 extension PodcastDatasource: NSTableViewDelegate {
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        let selectedRow = self.tableView.selectedRow
+        if selectedRow >= 0 && selectedRow < self.podcasts.count {
+            let podcast = self.podcasts[selectedRow]
+            let podcastObjectId = podcast.objectID
 
+            let userInfo: [AnyHashable: Any] = [
+                Constants.NotificationUserInfoKeys.PodcastSelectedObjectId: podcastObjectId
+            ]
+
+            let notificationName = Constants.Notifications.PodcastSelected
+            let notification = Notification(name: notificationName, object: self, userInfo: userInfo)
+            NotificationCenter.default.post(notification)
+        }
+    }
 }
 
 extension PodcastDatasource: NSTableViewDataSource {
@@ -152,8 +166,4 @@ class PodcastsViewController: NSViewController {
             self.podcastURLTextField.stringValue = ""
         }
     }
-}
-
-extension PodcastsViewController {
-
 }
