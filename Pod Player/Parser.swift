@@ -36,4 +36,35 @@ struct Parser {
         let metadata = PodcastMetadata(title: title, imageURL: imageURL, feedURL: feedURL)
         return metadata
     }
+
+    func getEpisodes(data: Data) -> [Episode] {
+        var episodes: [Episode] = []
+        let xml = SWXMLHash.parse(data)
+        let channel = xml["rss"]["channel"]
+        for item in channel["item"].all {
+            var payload: [String: String] = [:]
+            if let title = item["title"].element?.text {
+                payload[Episode.titleKey] = title
+            }
+
+            if let htmlDesc = item["description"].element?.text {
+                payload[Episode.descriptionKey] = htmlDesc
+            }
+
+            if let link = item["enclosure"].element?.attribute(by: "url")?.text {
+                payload[Episode.audioURLKey] = link
+            } else if let link = item["link"].element?.text {
+                payload[Episode.audioURLKey] = link
+            }
+
+            if let pubDate = item["pubDate"].element?.text {
+                payload[Episode.publicationDateKey] = pubDate
+            }
+
+            let episode = Episode(payload: payload)
+            episodes.append(episode)
+        }
+
+        return episodes
+    }
 }

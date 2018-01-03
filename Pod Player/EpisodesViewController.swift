@@ -73,9 +73,28 @@ class EpisodesViewController: NSViewController {
                 self.imageView.image = image
             }
             self.pauseButton.isHidden = true
+            self.getEpisodes()
         } else {
             self.titleLabel.stringValue = ""
             self.imageView.image = nil
+        }
+    }
+}
+
+extension EpisodesViewController {
+    func getEpisodes() {
+        if let urlString = self.podcast?.rssURL, let url = URL(string: urlString) {
+            let session = URLSession.shared
+            let task = session.dataTask(with: url, completionHandler: { (data: Data?, _: URLResponse?, error: Error?) in
+                guard let data = data else {
+                    print(error!)
+                    return
+                }
+                let parser = Parser()
+                let episodes = parser.getEpisodes(data: data)
+                print(episodes)
+            })
+            task.resume()
         }
     }
 }
