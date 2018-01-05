@@ -7,17 +7,50 @@
 //
 
 import Cocoa
+import AVFoundation
+
+extension AVPlayer {
+    var isPlaying: Bool {
+        return self.rate != 0 && self.error == nil
+    }
+}
+
+protocol EpisodesDatasourceDelegate: class {
+    func episodeSelected(episode: Episode)
+}
 
 class EpisodesTableViewDatasource: NSObject {
-
+    var episodes: [Episode] = []
+    weak var delegate: EpisodesDatasourceDelegate?
+    @IBOutlet weak var tableView: NSTableView!
 }
 
 extension EpisodesTableViewDatasource: NSTableViewDelegate {
-
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        let selectedRow = self.tableView.selectedRow
+        if selectedRow >= 0 && selectedRow < self.episodes.count {
+            if let delegate = self.delegate {
+                let episode = self.episodes[selectedRow]
+                delegate.episodeSelected(episode: episode)
+            }
+        }
+    }
 }
 
 extension EpisodesTableViewDatasource: NSTableViewDataSource {
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        return self.episodes.count
+    }
 
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let identifier = NSUserInterfaceItemIdentifier(rawValue: "episodeCellIdentifier")
+        if let cell = tableView.makeView(withIdentifier: identifier, owner: self) as? NSTableCellView {
+            let episode = self.episodes[row]
+            cell.textField?.stringValue = episode.title
+            return cell
+        }
+        return nil
+    }
 }
 
 class EpisodesViewController: NSViewController {
@@ -28,6 +61,8 @@ class EpisodesViewController: NSViewController {
     @IBOutlet weak var tableView: NSTableView!
 
     fileprivate var podcast: Podcast?
+
+    var player: AVPlayer?
 
     var context: NSManagedObjectContext? {
         if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
@@ -40,6 +75,10 @@ class EpisodesViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let datasource = self.tableView.dataSource as? EpisodesTableViewDatasource {
+            datasource.delegate = self
+        }
+
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(handlePodcastSelected(notification:)),
                                                name: Constants.Notifications.PodcastSelected,
@@ -47,6 +86,17 @@ class EpisodesViewController: NSViewController {
     }
 
     @IBAction func pauseButtonClicked(_ sender: Any) {
+        guard let player = self.player else {
+            return
+        }
+        if player.isPlaying {
+            player.pause()
+            self.pauseButton.title = NSLocalizedString("Play", comment: "Play")
+        } else {
+            player.play()
+            self.pauseButton.title = NSLocalizedString("Pause", comment: "Pause")
+        }
+
     }
 
     @IBAction func deleteButtonClicked(_ sender: Any) {
@@ -92,9 +142,29 @@ extension EpisodesViewController {
                 }
                 let parser = Parser()
                 let episodes = parser.getEpisodes(data: data)
-                print(episodes)
+                DispatchQueue.main.async {
+                    if let datasource = self.tableView.dataSource as? EpisodesTableViewDatasource {
+                        datasource.episodes = episodes
+                        self.tableView.reloadData()
+                    }
+                }
             })
             task.resume()
+        }
+    }
+}
+
+extension EpisodesViewController: EpisodesDatasourceDelegate {
+    func episodeSelected(episode: Episode) {
+        if let url = URL(string: episode.audioURL) {
+            self.player?.pause()
+            self.player = nil
+
+            self.player = AVPlayer(url: url)
+            self.player?.play()
+
+            self.pauseButton.title = NSLocalizedString("Pause", comment: "Pause")
+            self.pauseButton.isHidden = false
         }
     }
 }
